@@ -22,11 +22,11 @@
                     <span class="input-group-addon">
                       <i class="glyphicon glyphicon-user"></i>
                     </span>
-                    <input class="form-control" placeholder="Username" name="loginname" type="text" autofocus>
+                    <input class="form-control" placeholder="UserName" name="loginName" type="text" autofocus>
                   </div>
                 </div>
                 <div class="form-group">
-                  <input type="submit" class="btn btn-lg btn-primary btn-block" value="Sign in">
+                  <input type="submit" class="btn btn-lg btn-primary btn-block" value="Sign in" >
                 </div>
               </div>
             </div>
@@ -36,7 +36,7 @@
       <div class="panel-footer ">
         Don't have an account ? <a href="#" onClick="">Too bad !</a>
       </div>
-            </div>
+     </div>
   </div>
 </div>
 </div>

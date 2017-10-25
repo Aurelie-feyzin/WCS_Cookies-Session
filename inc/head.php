@@ -1,13 +1,81 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?php
+
+session_start();
+
+// On créer un tableau pour exploser l'url actuel
+$uri = explode("/", $_SERVER['PHP_SELF']);
+// On retire la page actuel ( exemple : index.php sera retiré )
+$page = array_pop($uri);
+
+
+//Si pas logger => paage login
+if (!isset($_SESSION['userName']) and $page !== 'login.php') {
+    header('Location: login.php');
+}
+//Creation du login
+if(isset($_POST['loginName'])) {
+    $_SESSION['userName'] = $_POST['loginName'];
+    header("location: index.php");
+    exit();
+}
+//Si deja logger pas possible de retourner à login.php
+if (isset($_SESSION['userName']) and $page === 'login.php') {
+    header('Location: index.php');
+}
+
+if (isset($_GET['add_to_cart'])) {
+    $cookie_name = $_GET['add_to_cart'];
+    $value = 1;
+    if (!isset($_COOKIE[$cookie_name])) {
+        $value = 1;
+        setcookie($cookie_name, $value);
+    } else {
+        $value += $_COOKIE[$cookie_name];
+        setcookie($cookie_name, $value);
+        if ($page === "cart.php") {
+            header("refresh:0;url=$page");
+        }
+    }
+}
+
+
+if (isset($_GET['delete_to_cart'])) {
+    $cookie_name = $_GET['delete_to_cart'];
+    //$value = 1;
+     $value = $_COOKIE[$cookie_name] - 1;
+        setcookie($cookie_name, $value);
+        if ($page === "cart.php") {
+            header("refresh:0;url=$page");
+        }
+        if ($value === 0) {
+         setcookie($cookie_name, "", time() - 3600);
+
+        }
+}
+
+//Log out
+if ($_GET['login'] === 'out') {
+    session_destroy();
+    foreach ($_COOKIE as $key => $cookie) {
+       setcookie($key, "", time() - 3600);
+    }
+    header('Location: login.php');
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr" dir="ltr">
 <head>
+
+
   <title>The Cookie Factory</title>
-</head>
+
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <link href="https://fonts.googleapis.com/css?family=Kaushan+Script" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="assets/styles.css" />
+</head>
 <body>
   <header>
     <!-- MENU ENTETE -->
@@ -40,11 +108,18 @@
               Cart
             </a>
           </li>
+            <?php if ($_SESSION['userName'] !== null) {
+                echo "<li >
+                        <a href = '?login=out' class='btn  navbar-btn' >
+                        DECONNEXION
+                        </a >
+                    </li >";
+            } ?>
         </ul>
       </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
   </nav>
   <div class="container-fluid text-right">
-    <strong>Hello Wilder !</strong>
+    <strong>Hello <?php echo (!empty($_SESSION['userName']) ? $_SESSION['userName'] : 'Wilder'); ?></strong>
   </div>
 </header>
